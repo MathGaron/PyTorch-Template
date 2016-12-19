@@ -1,10 +1,11 @@
 import PyTorchHelpers
 import numpy as np
 
+
 def Example1():
     # init
-    model = PyTorchHelpers.load_lua_class("ModelExample.lua", 'ModelExample')
-    torch_model = model("cuda", 0.001, 0)
+    model_class = PyTorchHelpers.load_lua_class("ModelExample.lua", 'ModelExample')
+    torch_model = model_class("cuda", 0.001, 0)
     torch_model.build_model((3, 100, 100), 12, 5)
     torch_model.init_model()
 
@@ -17,19 +18,13 @@ def Example1():
     label = np.ones((2, 2), dtype=np.float32)
     label[0, :] = 0
 
-    # train
-    for i in range(100):
-        loss = torch_model.train(img, label)
-        print("loss : {}".format(loss))
+    return torch_model, img, label
 
-    # test
-    prediction = torch_model.test(img).asNumpyTensor()
-    print("prediction : {}".format(prediction))
 
 def Example2():
     # init
-    model = PyTorchHelpers.load_lua_class("ModelExample2.lua", 'ModelExample2')
-    torch_model = model("cuda", 0.001, 0)
+    model_class = PyTorchHelpers.load_lua_class("ModelExample2.lua", 'ModelExample2')
+    torch_model = model_class("cuda", 0.001, 0)
     torch_model.build_model((3, 100, 100), 12, 5)
     torch_model.init_model()
 
@@ -50,16 +45,18 @@ def Example2():
     label2 = np.ones((2, 2), dtype=np.float32)
     label2[0, :] = 0
 
-    # train
-    for i in range(100):
-        loss = torch_model.train([img1, img2], [label1, label2])
-        print("loss : {}".format(loss))
-
-    # test
-    prediction = torch_model.test([img1, img2])
-    print("prediction : {}".format(prediction))
+    return torch_model, [img1, img2], [label1, label2]
 
 
 if __name__ == '__main__':
-    #Example1()
-    Example2()
+    # Example1()
+    model, inputs, labels = Example2()
+
+    # train
+    for i in range(100):
+        loss = model.train(inputs, labels)
+        print("loss : {}".format(loss))
+
+    # test
+    prediction = model.test(inputs)
+    print("prediction : {}".format(prediction))
