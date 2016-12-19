@@ -120,13 +120,14 @@ function ModelBase:test(inputs)
     self.net:evaluate()
     local converted_inputs = self:convert_inputs(inputs)
     local output = self.net:forward(converted_inputs)
-    return self:convert_outputs(output)
+    -- Pytorch does not support gpu tensor
+    return self:convert_outputs(output, "cpu")
 end
 
 function ModelBase:loss_function(prediction, truth)
-    self.predictionTensor = self:setup_tensor(prediction, self.predictionTensor)
+    local prediction_b = self:convert_outputs(prediction, self.backend)
     self.truthTensor = self:setup_tensor(truth, self.truthTensor)
-    losses, f_grad = self:compute_criterion(self.predictionTensor, self.truthTensor)
+    losses, f_grad = self:compute_criterion(prediction_b, self.truthTensor)
     return losses
 end
 
