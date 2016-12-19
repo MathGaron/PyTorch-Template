@@ -5,7 +5,7 @@ import numpy as np
 def Example1():
     # init
     model_class = PyTorchHelpers.load_lua_class("ModelExample.lua", 'ModelExample')
-    torch_model = model_class("cuda", 0.001, 0)
+    torch_model = model_class("cuda", 0.001)
     torch_model.build_model((3, 100, 100), 12, 5)
     torch_model.init_model()
 
@@ -24,7 +24,7 @@ def Example1():
 def Example2():
     # init
     model_class = PyTorchHelpers.load_lua_class("ModelExample2.lua", 'ModelExample2')
-    torch_model = model_class("cuda", 0.001, 0)
+    torch_model = model_class("cuda", 0.001)
     torch_model.build_model((3, 100, 100), 12, 5)
     torch_model.init_model()
 

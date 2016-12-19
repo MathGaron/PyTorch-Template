@@ -9,8 +9,8 @@ require 'ModelBase'
 
 local ModelExample = torch.class('ModelExample', 'ModelBase')
 
-function ModelExample:__init(backend, learning_rate, weight_decay)
-    ModelBase.__init(self, backend, learning_rate, weight_decay)
+function ModelExample:__init(backend, learning_rate)
+    ModelBase.__init(self, backend, learning_rate)
 
 end
 

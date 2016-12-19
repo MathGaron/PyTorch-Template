@@ -15,7 +15,7 @@ require 'math'
 
 local ModelBase = torch.class('ModelBase')
 
-function ModelBase:__init(backend, learning_rate, weight_decay)
+function ModelBase:__init(backend, learning_rate)
     self.net = nil
     self.backend = backend
     self.optimFunction = optim.adam
@@ -28,17 +28,29 @@ function ModelBase:__init(backend, learning_rate, weight_decay)
         momentum = 0.9,
         dampening = 0,
         nesterov = 0.9,
-
-        weightDecay = weight_decay,
-        --linear_size = linear_size,
-        --convo1_filters = convo1_filters,
-        --convo2_filters = convo2_filters,
     }
+end
+
+function ModelBase:set_configs(dict)
+    for k, v in pairs(dict) do
+        self.config[k] = v
+    end
+end
+
+function ModelBase:get_configs()
+    return self.config
 end
 
 function ModelBase:show_model()
     print(string.format("Backend : %s", self.backend))
     print(self.net)
+end
+
+function ModelBase:show_memory_info()
+    require 'cutorch'
+    idx = cutorch.getDevice()
+    freeMemory, totalMemory = cutorch.getMemoryUsage(idx)
+    print(string.format("Free memory : %f Gb, Total memory : %f Gb", freeMemory/1073741824.0, totalMemory/1073741824.0))
 end
 
 -- Convert tensor based on backend requested
@@ -111,13 +123,20 @@ function ModelBase:test(inputs)
     return self:convert_outputs(output)
 end
 
-function ModelBase:Save(path)
+function ModelBase:loss_function(prediction, truth)
+    self.predictionTensor = self:setup_tensor(prediction, self.predictionTensor)
+    self.truthTensor = self:setup_tensor(truth, self.truthTensor)
+    losses, f_grad = self:compute_criterion(self.predictionTensor, self.truthTensor)
+    return losses
+end
+
+function ModelBase:save(path)
     torch.save(path..".t7", self.net)
     torch.save(path.."_crit.t7", self.crit)
     torch.save(path.."_optim.t7", self.config)
 end
 
-function ModelBase:Load(path)
+function ModelBase:load(path)
     self.net = torch.load(path..".t7")
     self.config = torch.load(path.."_optim.t7")
     self.crit = self:set_backend(torch.load(path.."_crit.t7"))
