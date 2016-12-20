@@ -95,6 +95,11 @@ function ModelBase:compute_criterion(forward_input, label)
     error("compute_criterion not defined!")
 end
 
+function ModelBase:extract_features()
+    -- This function return a dict containning layers activations. By default it will return nil
+    return nil
+end
+
 function ModelBase:init_model()
     self.net = self:set_backend(self.net)
     self.params, self.gradParams = self.net:getParameters()
