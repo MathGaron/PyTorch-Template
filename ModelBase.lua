@@ -100,6 +100,10 @@ function ModelBase:extract_features()
     return nil
 end
 
+function ModelBase:on_train()
+    -- Will be called when train is called. can be reimplemented by subclasses
+end
+
 function ModelBase:init_model()
     self.net = self:set_backend(self.net)
     self.params, self.gradParams = self.net:getParameters()
@@ -107,6 +111,7 @@ end
 
 function ModelBase:train(inputs, labels)
     self.net:training()
+    self:on_train()
     local func = function(x)
         collectgarbage()
         self.gradParams:zero()
