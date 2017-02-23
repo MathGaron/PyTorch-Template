@@ -37,8 +37,8 @@ function ModelBase:set_configs(dict)
     end
 end
 
-function ModelBase:get_configs()
-    return self.config
+function ModelBase:get_configs(name)
+    return self.config[name]
 end
 
 function ModelBase:show_model()
@@ -122,6 +122,12 @@ function ModelBase:train(inputs, labels)
        return losses['label'], self.gradParams
     end
     self.optimFunction(func, self.params, self.config)
+    --local rand = ((torch.rand(labels:size()) - 0.5) * 2):cuda()
+    --local f = function(x)
+    --    local loss, grad = self:compute_criterion(x, labels[1])
+    --    return loss['label'], grad
+    --end
+    -- local diff,dC,dC_est = optim.checkgrad(f, rand[1], 0.0001)
     return losses
 end
 
@@ -139,6 +145,10 @@ function ModelBase:loss_function(prediction, truth)
     self.truthTensor = self:setup_tensor(truth, self.truthTensor)
     losses, f_grad = self:compute_criterion(prediction_b, self.truthTensor)
     return losses
+end
+
+function ModelBase:clean_model()
+    self.net = self.net:clone('weight','bias','running_mean','running_std')
 end
 
 function ModelBase:save(path)
