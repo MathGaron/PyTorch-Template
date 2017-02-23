@@ -147,12 +147,12 @@ function ModelBase:loss_function(prediction, truth)
     return losses
 end
 
-function ModelBase:clean_model()
-    self.net = self.net:clone('weight','bias','running_mean','running_std')
-end
-
-function ModelBase:save(path)
-    torch.save(path..".t7", self.net)
+function ModelBase:save(path, light)
+    local model = self.net
+    if light then
+        model = self.net:clone('weight','bias','running_mean','running_std')
+    end
+    torch.save(path..".t7", model)
     torch.save(path.."_crit.t7", self.crit)
     torch.save(path.."_optim.t7", self.config)
 end
