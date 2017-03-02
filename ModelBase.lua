@@ -100,7 +100,7 @@ function ModelBase:extract_features()
     return nil
 end
 
-function ModelA:extract_grad_statistic()
+function ModelBase:extract_grad_statistic()
     -- This function return a dict containning gradient information after backward pass.
     return nil
 end
