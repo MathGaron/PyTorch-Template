@@ -100,6 +100,11 @@ function ModelBase:extract_features()
     return nil
 end
 
+function ModelA:extract_grad_statistic()
+    -- This function return a dict containning gradient information after backward pass.
+    return nil
+end
+
 function ModelBase:on_train()
     -- Will be called when train is called. can be reimplemented by subclasses
 end
