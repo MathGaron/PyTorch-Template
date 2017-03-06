@@ -15,10 +15,15 @@ require 'math'
 
 local ModelBase = torch.class('ModelBase')
 
-function ModelBase:__init(backend, learning_rate)
+function ModelBase:__init(backend, learning_rate, optimfunc)
     self.net = nil
     self.backend = backend
     self.optimFunction = optim.adam
+    if optimfunc == "sgd" then
+       self.optimFunction = optim.sgd
+    elseif optimfunc == "adadelta" then
+        self.optimFunction = optim.adadelta
+    end
     self.config = {
         learningRate = learning_rate,
         learningRateDecay = 0,
